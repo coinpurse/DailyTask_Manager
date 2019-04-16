@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "343829681924",
+    "firebase_url": "https://cs441-app.firebaseio.com",
+    "project_id": "cs441-app",
+    "storage_bucket": "cs441-app.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:343829681924:android:4cf729ff659baaf3",
+        "android_client_info": {
+          "package_name": "com.cs441_app"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "343829681924-5396o2l1i9n6o5glrtsf59la4oojsi42.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBarpRnRbqFWZa07DxDF06w-t7Jp28LIxo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "343829681924-5396o2l1i9n6o5glrtsf59la4oojsi42.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

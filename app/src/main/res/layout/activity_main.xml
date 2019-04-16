@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+    <LinearLayout tools:context=".MainActivity" android:orientation="vertical" android:layout_height="match_parent" android:layout_width="match_parent" xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+
+
+    -<LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_marginTop="15dp">
+
+    <TextView android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="30sp" android:hint="Select Date" android:layout_marginLeft="15dp" android:id="@+id/tvDate"/>
+
+    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="15sp" android:layout_marginLeft="30sp" android:id="@+id/btnAddObject" android:text="ADD"/>
+
+    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:textSize="15sp" android:id="@+id/btnToDoList" android:text="ToDo"/>
+
+</LinearLayout>
+
+    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginTop="40dp" android:id="@+id/btnGoToTask" android:text="Go To Task" android:layout_gravity="center_horizontal"/>
+
+</LinearLayout>
