@@ -112,13 +112,15 @@ public class Database_Handler {
             @Override
             public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
+                    ArrayList<Task> list = new ArrayList();
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Log.d(TAG, document.getId() + " => " + document.getData());
                         Map info = document.getData();
                         Task t = new Task((long) info.get("day"), (long) info.get("month"), (long) info.get("year"), (long) info.get("hour"), (long) info.get("min"), (long) info.get("category"), (String) info.get("title"), (String) info.get("description"), (String) info.get("location"), (boolean) info.get("share")
                                 , new User((String) ((Map) info.get("user")).get("userID"), (String) ((Map) info.get("user")).get("name")));
-
+                        list.add(t);
                     }
+                    // full array list is here, put function call to update view here.
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
