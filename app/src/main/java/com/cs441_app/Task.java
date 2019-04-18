@@ -21,6 +21,12 @@ public class Task {
 
     }
 
+    public Task(long Day, long Month, long Year){
+        day = Day;
+        month = Month;
+        year = Year;
+    }
+
     public Task(long Day,long Month, long Year, long Hour, long Min, long Category, String Title, String Description, String Location, boolean Share, User User){
         day = Day;
         month = Month;
@@ -33,6 +39,11 @@ public class Task {
         location = Location;
         share = Share;
         user = User;
+    }
+
+    @Override
+    public String toString() {
+        return title + "  " +Long.toString(hour) + ":" + Long.toString(min);
     }
 
     public long getDay() {

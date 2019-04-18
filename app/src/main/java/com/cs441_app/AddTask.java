@@ -105,6 +105,7 @@ public class AddTask extends AppCompatActivity {
                     Toast.makeText(AddTask.this, "Incorrect input, please try again", Toast.LENGTH_SHORT).show();
                 else {
                     MainActivity.dh.writeTask(MainActivity.user.getUserID(), "", new Task(dayPass, monthPass, yearPass, startHour, startMinute, categoryTask, titleTask, descriptionTask, locationTask, false, MainActivity.user));
+                    MainActivity.dh.readBlock(MainActivity.user.getUserID(), "", "04202019");
                     Toast.makeText(AddTask.this, "Task saved to your calendar", Toast.LENGTH_LONG).show();
                     Intent intentHome = new Intent(AddTask.this,
                             MainActivity.class);

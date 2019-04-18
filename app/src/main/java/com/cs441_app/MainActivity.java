@@ -21,16 +21,24 @@ import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.TimePicker;
+
+import java.util.ArrayList;
 import java.util.Calendar;
 
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
 
     public static Database_Handler dh;
     public static User user;
     private static boolean usercreated;
 
     private static final String TAG = "MainActivity";
+
+    // Task view stuff
+    private static ListView listview;
+    private static ArrayList<Task> itemArray;
+    private static ArrayAdapter<Task> adapterArray;
+    private static boolean itemarraycreated;
 
     //For getting the date
     private TextView mDisplayDate;
@@ -43,22 +51,41 @@ public class MainActivity extends AppCompatActivity {
     private Button btnTodo;
     //-----------------------
 
+    private static int day;
+    private static int month;
+    private static int year;
+    private static boolean calendarcreate;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
+
         //------------------------------------------------------MAKE THIS INTO A FUNCTION
         mDisplayDate = (TextView) findViewById(R.id.tvDate);
-        Calendar cal = Calendar.getInstance();
-        int year = cal.get(Calendar.YEAR);
-        int month = cal.get(Calendar.MONTH);
-        int day = cal.get(Calendar.DAY_OF_MONTH);
 
-        month = month + 1;
+        if(!calendarcreate) {
+            Calendar cal = Calendar.getInstance();
+            year = cal.get(Calendar.YEAR);
+            month = cal.get(Calendar.MONTH);
+            day = cal.get(Calendar.DAY_OF_MONTH);
+            month = month + 1;
+            calendarcreate = true;
+        }
         String date = month + "/" + day + "/" + year;
         mDisplayDate.setText(date);
+        // Task List
+        if(!itemarraycreated){
+            itemArray = new ArrayList();
+            itemarraycreated = true;
+        }
+        listview = findViewById(R.id.TaskList);
+        adapterArray = new ArrayAdapter<Task>(MainActivity.this, android.R.layout.simple_list_item_1, itemArray);
+        listview.setAdapter(adapterArray);
+        listview.setOnItemClickListener(MainActivity.this);
 
+        // Create Database Handler and Create New user if the app is open for the first time
         dh = new Database_Handler();
 
         if(!usercreated) {
@@ -66,6 +93,9 @@ public class MainActivity extends AppCompatActivity {
             usercreated = true;
         }
 
+
+        // Get task list for the current date
+        dh.readBlock(user.getUserID(),"", dh.generateBlockID(new Task(day,month,year)));
         //----------------------------------------------------------
 
         btnAddTask = findViewById(R.id.btnAddObject);
@@ -87,10 +117,7 @@ public class MainActivity extends AppCompatActivity {
 
             @Override
             public void onClick(View view) {
-                Calendar cal = Calendar.getInstance();
-                int year = cal.get(Calendar.YEAR);
-                int month = cal.get(Calendar.MONTH);
-                int day = cal.get(Calendar.DAY_OF_MONTH);
+
 
                 DatePickerDialog dialog = new DatePickerDialog(
                         MainActivity.this,
@@ -105,11 +132,15 @@ public class MainActivity extends AppCompatActivity {
 
         mDateSetListener = new DatePickerDialog.OnDateSetListener() {
             @Override
-            public void onDateSet(DatePicker view, int year, int month, int dayOfMonth) {
+            public void onDateSet(DatePicker view, int Year, int Month, int dayOfMonth) {
                 //This is where it would call the server to get the data for the day here
                 month = month + 1;
+                day = dayOfMonth;
+                month = Month;
+                year = Year;
                 String date = month + "/" + dayOfMonth + "/" + year;
                 mDisplayDate.setText(date);
+                dh.readBlock(user.getUserID(),"", dh.generateBlockID(new Task(dayOfMonth,month,year)));
             }
         };
         //-----------------------------------------------------------------------------
@@ -132,6 +163,22 @@ public class MainActivity extends AppCompatActivity {
                 startActivity(intentToDo);
             }
         });
+    }
+
+    @Override
+    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+        ShowTask.getTaskFromMain(itemArray.get(position));
+        Intent intentGoToTask = new Intent(MainActivity.this,
+                ShowTask.class);
+        startActivity(intentGoToTask);
+    }
+
+    public static void updateTaskList(ArrayList<Task> list){
+        adapterArray.clear();
+        for(int i = 0; i < list.size(); i++){
+            adapterArray.add(list.get(i));
+        }
+
     }
 }
 /*

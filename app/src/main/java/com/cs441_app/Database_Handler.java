@@ -121,6 +121,8 @@ public class Database_Handler {
                         list.add(t);
                     }
                     // full array list is here, put function call to update view here.
+                    System.out.println("Size of list: " + list.size());
+                    MainActivity.updateTaskList(list);
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }

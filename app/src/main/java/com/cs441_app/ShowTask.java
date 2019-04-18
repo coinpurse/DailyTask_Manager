@@ -21,6 +21,8 @@ public class ShowTask extends AppCompatActivity {
     private TextView txtCategory;
     private TextView txtDate;
 
+    private static Task task;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -34,6 +36,7 @@ public class ShowTask extends AppCompatActivity {
         txtCategory=findViewById(R.id.txtCategoryShowTask);
         txtDate=findViewById(R.id.txtDateShowTask);
 
+        /*
         //Used for test purposes to fill the object with crap
         //These will be gotten from the object of the selected
         long Day= 7;
@@ -51,33 +54,33 @@ public class ShowTask extends AppCompatActivity {
 
         Task testTask = new Task( Day, Month, Year, Hour, Min, Category, Title, Description, Location, Share, UserTask);
 
-
+*/
 
         //Gets the time
-        long startHour=testTask.getHour();
-        long startMin=testTask.getMin();
+        long startHour=task.getHour();
+        long startMin=task.getMin();
 
         String TaskTime = (startHour + ":" + startMin);
 
         //Gets the day
-        long dayTask = testTask.getDay();
-        long monthTask = testTask.getMonth();
-        long yearTask = testTask.getYear();
+        long dayTask = task.getDay();
+        long monthTask = task.getMonth();
+        long yearTask = task.getYear();
 
         String dateTask = (monthTask + "/" + dayTask + "/" +yearTask);
 
         //For the category
         String cateogoryOutput;
-        long category = testTask.getCategory();
+        long category = task.getCategory();
         if(category==0) cateogoryOutput="School";
         else cateogoryOutput = "Void";
 
         //setText functions
         txtDate.setText(dateTask);
-        txtTitle.setText(testTask.getTitle());
-        txtDescription.setText(testTask.getDescription());
-        txtLocation.setText(testTask.getLocation());
-        txtTitle.setText(testTask.getTitle());
+        txtTitle.setText(task.getTitle());
+        txtDescription.setText(task.getDescription());
+        txtLocation.setText(task.getLocation());
+        txtTitle.setText(task.getTitle());
         txtTime.setText(TaskTime);
         txtCategory.setText(cateogoryOutput);
 
@@ -92,5 +95,9 @@ public class ShowTask extends AppCompatActivity {
             }
         });
 
+    }
+
+    public static void getTaskFromMain(Task t){
+        task = t;
     }
 }

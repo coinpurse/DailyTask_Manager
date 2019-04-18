@@ -13,6 +13,17 @@
 
 </LinearLayout>
 
-    <Button android:layout_height="wrap_content" android:layout_width="wrap_content" android:layout_marginTop="40dp" android:id="@+id/btnGoToTask" android:text="Go To Task" android:layout_gravity="center_horizontal"/>
+    <ListView
+        android:id="@+id/TaskList"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" />
+
+    <Button
+        android:id="@+id/btnGoToTask"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center_horizontal"
+        android:layout_marginTop="40dp"
+        android:text="Go To Task" />
 
 </LinearLayout>
