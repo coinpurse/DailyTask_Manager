@@ -123,7 +123,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                         MainActivity.this,
                         android.R.style.Theme_DeviceDefault_Dialog,//not sure if this is the correct theme
                         mDateSetListener,
-                        year, month, day);
+                        year, month - 1, day);
 
                 //dialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
                 dialog.show();
@@ -134,9 +134,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             @Override
             public void onDateSet(DatePicker view, int Year, int Month, int dayOfMonth) {
                 //This is where it would call the server to get the data for the day here
-                month = month + 1;
                 day = dayOfMonth;
-                month = Month;
+                month = Month + 1;
                 year = Year;
                 String date = month + "/" + dayOfMonth + "/" + year;
                 mDisplayDate.setText(date);
