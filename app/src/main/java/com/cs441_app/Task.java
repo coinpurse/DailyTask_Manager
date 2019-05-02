@@ -17,6 +17,8 @@ public class Task {
     private boolean share;
     private User user;
 
+    private String id;
+
     public Task(){
 
     }
@@ -41,9 +43,32 @@ public class Task {
         user = User;
     }
 
+    public Task(long Day,long Month, long Year, long Hour, long Min, long Category, String Title, String Description, String Location, boolean Share, User User, String ID){
+        day = Day;
+        month = Month;
+        year = Year;
+        hour = Hour;
+        min = Min;
+        category = Category;
+        title = Title;
+        description = Description;
+        location = Location;
+        share = Share;
+        user = User;
+        id = ID;
+    }
+
     @Override
     public String toString() {
         return title + "  " +Long.toString(hour) + ":" + Long.toString(min);
+    }
+
+    public String getId() {
+        return id;
+    }
+
+    public void setId(String id) {
+        this.id = id;
     }
 
     public long getDay() {
