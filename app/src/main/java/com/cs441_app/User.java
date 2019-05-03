@@ -8,6 +8,9 @@ public class User {
 
     }
 
+    public User(String name){
+        Name = name;
+    }
     public User(String userID, String name){
         UserID = userID;
         Name = name;

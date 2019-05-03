@@ -8,6 +8,10 @@ public class Group {
 
     }
 
+    public Group(String Name){
+        name = Name;
+    }
+
     public Group(String GroupID, String Name){
         groupID = GroupID;
         name = Name;
