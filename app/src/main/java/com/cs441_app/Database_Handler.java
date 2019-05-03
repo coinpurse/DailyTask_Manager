@@ -10,6 +10,7 @@ import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.FieldPath;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 
@@ -39,9 +40,7 @@ public class Database_Handler {
         v = new ArrayList();
     }
 
-    public FirebaseFirestore getDb(){
-        return db;
-    }
+
     /**
      * Writes a task to either a group calendar or an account calendar. If the GroupID parameter is empty, then it will save the task to the users calendar. If a GroupID is provided, then
      * it will write the task to that groups calendar
@@ -67,24 +66,26 @@ public class Database_Handler {
      * @param msg The message itself
      */
     public void writeMessage(String GroupID, Message msg){
-        DocumentReference ref = db.collection("Group").document(GroupID).collection("Messages").document();
+        DocumentReference ref = db.collection("Groups").document(GroupID).collection("Messages").document();
         ref.set(msg);
     }
     /**
      * Creates a new group and adds it to the database with a given name and the AccountID of the person who is making it.
-     * @param AccountID The user who made the group. This user is automatically added to the group.
+     * @param user The user who made the group. This user is automatically added to the group.
      * @param GroupName The name of the group that is being created.
      * @return Returns the group that was just created.
      */
-    public Group createGroup(String AccountID, String GroupName){
+    public Group createGroup(User user, String GroupName){
 
         DocumentReference groupref = db.collection("Groups").document();
 
-        groupref.set(GroupName);
-        groupref.collection("Members").document(AccountID);
-        db.collection("Users").document(AccountID).collection("Participates").document(groupref.getId());
+        Group group = new Group(GroupName);
+        groupref.set(group);
+        group.setGroupID(groupref.getId());
+        groupref.collection("Members").document(user.getUserID()).set(user);
+        db.collection("Users").document(user.getUserID()).collection("Participates").document(group.getGroupID()).set(group);
 
-        return new Group(groupref.getId(), GroupName);
+        return group;
     }
 
     /**
@@ -125,27 +126,120 @@ public class Database_Handler {
     public User createUser(String name){
         DocumentReference userref = db.collection("Users").document();
 
-        Map<String, Object> data = new HashMap<>();
-        data.put("name", name);
+        User user = new User(name);
+        userref.set(user);
+        user.setUserID(userref.getId());
 
-        User user = new User(userref.getId(),name);
-        userref.set(data)
-                .addOnSuccessListener(new OnSuccessListener<Void>() {
-                    @Override
-                    public void onSuccess(Void aVoid) {
-                        Log.d(TAG, "DocumentSnapshot successfully written!");
-                    }
-                })
-                .addOnFailureListener(new OnFailureListener() {
-                    @Override
-                    public void onFailure(@NonNull Exception e) {
-                        Log.w(TAG, "Error writing document", e);
-                    }
-                });
-
-        return new User(userref.getId(), name);
+        return user;
     }
 
+    /**
+     * Creates an array list of messages from a groups message collection and gives it to a static function
+     * @param GroupID The group the message list comes from
+     */
+    public void readMessageList(String GroupID){
+        db.collection("Groups").document(GroupID).collection("Messages").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<Message> list = new ArrayList();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        Map info = document.getData();
+                        Message m = new Message((String) info.get("content"), (String) info.get("authorName"), (String) info.get("authorID"), (Long) info.get("day"), (Long) info.get("month"), (Long) info.get("year"), (Long) info.get("hour"), (Long) info.get("min"));
+                        list.add(m);
+                    }
+                    // full array list is here, put function call to update view here.
+                    System.out.println("Size of list: " + list.size());
+                    // STATIC FUNCTION GOES HERE
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    /**
+     * Creates an array list of users from a groups members collection and gives it to a static function
+     * @param GroupID The group to get the members list from
+     */
+    public void readGroupMembers(String GroupID){
+        db.collection("Groups").document(GroupID).collection("Members").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<User> list = new ArrayList();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        Map info = document.getData();
+                        User u = new User((String) info.get("UserID"), (String) info.get("Name"));
+                        list.add(u);
+                    }
+                    // full array list is here, put function call to update view here.
+                    System.out.println("Size of list: " + list.size());
+                    // STATIC FUNCTION GOES HERE
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+    /**
+     * Creates an array list of groups from a users participation collection and gives it to static function
+     * @param AccountID The user to get the participation list from
+     */
+    public void readGroups_ByParticipation(String AccountID){
+        db.collection("Users").document(AccountID).collection("Participates").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<Group> list = new ArrayList();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        Map info = document.getData();
+                        Group g = new Group((String) info.get("groupID"), (String) info.get("name"));
+                        list.add(g);
+                    }
+                    // full array list is here, put function call to update view here.
+                    System.out.println("Size of list: " + list.size());
+                    // STATIC FUNCTION GOES HERE
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+
+    /**
+     * Creates an array list of groups from a given name and gives it to a static function
+     * @param Name The name of the group to search for
+     */
+    public void readGroups_ByName(String Name){
+        char i = Name.charAt(Name.length() - 1);
+        String Skey = Name.substring(0,Name.length() - 1) + (i+1);
+
+        Query q = db.collection("Groups").whereGreaterThanOrEqualTo("name", Name).whereLessThan("name", Skey);
+
+        q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<Group> list = new ArrayList();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        Map info = document.getData();
+                        Group g = new Group((String) info.get("groupID"), (String) info.get("name"));
+                        list.add(g);
+                    }
+                    // full array list is here, put function call to update view here.
+                    System.out.println("Size of list: " + list.size());
+                    // STATIC FUNCTION GOES HERE
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
     /**
      * Reads a block of tasks from the database and returns an array list of tasks to a static function.
      * @param AccountID The account that is accessing the database
@@ -163,7 +257,7 @@ public class Database_Handler {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Map info = document.getData();
                             Task t = new Task((long) info.get("day"), (long) info.get("month"), (long) info.get("year"), (long) info.get("hour"), (long) info.get("min"), (long) info.get("category"), (String) info.get("title"), (String) info.get("description"), (String) info.get("location"), (boolean) info.get("share")
-                                    , new User((String) ((Map) info.get("user")).get("userID"), (String) ((Map) info.get("user")).get("name")), document.getId());
+                                    , new User((String) ((Map) info.get("user")).get("userID"), (String) ((Map) info.get("user")).get("Name")), document.getId());
                             list.add(t);
                         }
                         // full array list is here, put function call to update view here.
@@ -185,7 +279,7 @@ public class Database_Handler {
                             Log.d(TAG, document.getId() + " => " + document.getData());
                             Map info = document.getData();
                             Task t = new Task((long) info.get("day"), (long) info.get("month"), (long) info.get("year"), (long) info.get("hour"), (long) info.get("min"), (long) info.get("category"), (String) info.get("title"), (String) info.get("description"), (String) info.get("location"), (boolean) info.get("share")
-                                    , new User((String) ((Map) info.get("user")).get("userID"), (String) ((Map) info.get("user")).get("name")));
+                                    , new User((String) ((Map) info.get("user")).get("userID"), (String) ((Map) info.get("user")).get("Name")));
                             list.add(t);
                         }
                         // full array list is here, put function call to update view here.
