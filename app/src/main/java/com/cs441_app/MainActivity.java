@@ -34,6 +34,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     private static final String TAG = "MainActivity";
 
+    // Github Test
     // Task view stuff
     private static ListView listview;
     private static ArrayList<Task> itemArray;
