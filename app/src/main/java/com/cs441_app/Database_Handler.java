@@ -90,12 +90,12 @@ public class Database_Handler {
 
     /**
      * Adds the user to a group. It does this by adding the users account ID to the groups members list and also adds the group ID to the users participation list
-     * @param AccountID The account to be added to the group
-     * @param GroupID The group that allows the user to join
+     * @param user The account to be added to the group
+     * @param group The group that allows the user to join
      */
-    public void joinGroup(String AccountID, String GroupID){
-        db.collection("Groups").document(GroupID).collection("Members").document(AccountID);
-        db.collection("Users").document(AccountID).collection("Participates").document(GroupID);
+    public void joinGroup(User user, Group group){
+        db.collection("Groups").document(group.getGroupID()).collection("Members").document(user.getUserID()).set(user);
+        db.collection("Users").document(user.getUserID()).collection("Participates").document(group.getGroupID()).set(group);
     }
 
     /**
@@ -108,29 +108,53 @@ public class Database_Handler {
         db.collection("Users").document(AccountID).collection("Participates").document(GroupID).delete();
     }
 
+    /**
+     * Deletes a task from either a user or a group calendar. The task is deleted from a group when a groups task is deleted or a synced task in a users calendar
+     * is deleted. Otherwise the task is deleted from the users calendar.
+     * @param AccountID The account of the user
+     * @param GroupID The groupID of the group, if you are deleted from a users calendar, leave this as ""
+     * @param task The task to be deleted.
+     */
     public void deleteTask(String AccountID, String GroupID, Task task){
         String BlockID = generateBlockID(task);
 
-        if(GroupID == ""){
+        if(GroupID == "" && task.isShare() == false){
             db.collection("Users").document(AccountID).collection("Calendar").document(BlockID).collection("Tasks").document(task.getId()).delete();
         }
         else{
-            db.collection("Groups").document(GroupID).collection("Calendar").document(BlockID).collection("Tasks").document(task.getId()).delete();
+            if(GroupID == "")
+                db.collection("Groups").document(task.getGroup().getGroupID()).collection("Calendar").document(BlockID).collection("Tasks").document(task.getId()).delete();
+            else
+                db.collection("Groups").document(GroupID).collection("Calendar").document(BlockID).collection("Tasks").document(task.getId()).delete();
         }
     }
     /**
      * Creates a new user and adds it to the database with a given name. The User is then given a unique ID that is returned in the user class.
-     * @param name The name of the user
-     * @return Returns the user object that was just created.
+     * @param user The user that is to be added to the database
      */
-    public User createUser(String name){
-        DocumentReference userref = db.collection("Users").document();
+    public void createUser(final User user){
+        db.collection("Users").whereEqualTo("userID", user.getUserID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    if(task.getResult().getDocuments().size() == 0){
+                        db.collection("Users").document(user.getUserID()).set(user);
+                    }
+                }
+                MainActivity.onUserCreation();
+            }});
+    }
 
-        User user = new User(name);
-        userref.set(user);
-        user.setUserID(userref.getId());
-
-        return user;
+    /**
+     * Sets the sync variable in the group participation collection of the user. If the variable is set to true and the user is part of the group, then
+     * when the user looks at their own calendar the synced group's tasks will appear in that calendar.
+     * @param AccountID The account of the user
+     * @param group The group whos sync variable will be set
+     * @param sync The sync value
+     */
+    public void setGroupSync(String AccountID, Group group, boolean sync){
+        group.setSync(sync);
+        db.collection("Users").document(AccountID).collection("Participates").document(group.getGroupID()).set(group);
     }
 
     /**
@@ -211,6 +235,34 @@ public class Database_Handler {
     }
 
     /**
+     * Creates an array list of groups from a users participation collection where the sync value is true and gives it to a static function
+     * @param AccountID The user to get the participation list from
+     * @param BlockID The blockID that is being sent down the static chain
+     */
+    public void readGroups_BySync(String AccountID, final String BlockID){
+        Query q = db.collection("Users").document(AccountID).collection("Participates").whereEqualTo("sync", true);
+
+        q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    ArrayList<Group> list = new ArrayList();
+                    for (QueryDocumentSnapshot document : task.getResult()) {
+                        Log.d(TAG, document.getId() + " => " + document.getData());
+                        Map info = document.getData();
+                        Group g = new Group((String) info.get("groupID"), (String) info.get("name"));
+                        list.add(g);
+                    }
+                    // full array list is here, put function call to update view here.
+                    System.out.println("Size of list: " + list.size());
+                    UserManager.updateGroupList(list, BlockID);
+                } else {
+                    Log.d(TAG, "Error getting documents: ", task.getException());
+                }
+            }
+        });
+    }
+    /**
      * Creates an array list of groups from a given name and gives it to a static function
      * @param Name The name of the group to search for
      */
@@ -245,8 +297,10 @@ public class Database_Handler {
      * @param AccountID The account that is accessing the database
      * @param GroupID The group that is accessing the database, if there is no group, leave this blank
      * @param BlockID The block id used to find the specified block to read from
+     * @param group Extra variable for sync functionality, if you don't know to put here then just initialize an empty group (new Group())
+     * @param share Notifies the sync functions that this task list is from a synced group, if you don't know what to put then put false
      */
-    public void readBlock(String AccountID, String GroupID, String BlockID){
+    public void readBlock(String AccountID, String GroupID, String BlockID, final Group group, final boolean share){
         if(GroupID == "") {
             db.collection("Users").document(AccountID).collection("Calendar").document(BlockID).collection("Tasks").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
                 @Override
@@ -258,11 +312,16 @@ public class Database_Handler {
                             Map info = document.getData();
                             Task t = new Task((long) info.get("day"), (long) info.get("month"), (long) info.get("year"), (long) info.get("hour"), (long) info.get("min"), (long) info.get("category"), (String) info.get("title"), (String) info.get("description"), (String) info.get("location"), (boolean) info.get("share")
                                     , new User((String) ((Map) info.get("user")).get("userID"), (String) ((Map) info.get("user")).get("Name")), document.getId());
+                            if(share){
+                                t.setShare(true);
+                                t.setGroup(group);
+                            }
                             list.add(t);
                         }
                         // full array list is here, put function call to update view here.
                         System.out.println("Size of list: " + list.size());
-                        MainActivity.updateTaskList(list);
+                        //MainActivity.updateTaskList(list);
+                        UserManager.updateTaskList(list);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }

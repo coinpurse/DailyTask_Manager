@@ -16,9 +16,9 @@ public class Task {
     private String location;
     private boolean share;
     private User user;
+    private Group group;
 
     private String id;
-
     public Task(){
 
     }
@@ -69,6 +69,14 @@ public class Task {
 
     public void setId(String id) {
         this.id = id;
+    }
+
+    public Group getGroup() {
+        return group;
+    }
+
+    public void setGroup(Group group) {
+        this.group = group;
     }
 
     public long getDay() {
