@@ -48,8 +48,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     //Buttons
     private Button btnAddTask;
-    private Button btnGoToTask;
-    private Button btnTodo;
+    private Button btnMenu;
+    //private Button btnGoToTask;
+    //private Button btnTodo;
     //-----------------------
 
     private static int day;
@@ -61,6 +62,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        btnMenu=findViewById(R.id.btnMenuMain);
+        btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentMenu = new Intent(MainActivity.this,Menu.class);
+                startActivity(intentMenu);
+            }
+        });
 
 
         //------------------------------------------------------MAKE THIS INTO A FUNCTION
@@ -144,6 +154,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         };
         //-----------------------------------------------------------------------------
+
+        /*
         btnGoToTask = findViewById(R.id.btnGoToTask);
         btnGoToTask.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -163,6 +175,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 startActivity(intentToDo);
             }
         });
+        */
     }
 
     @Override

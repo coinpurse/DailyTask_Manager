@@ -101,7 +101,7 @@ public class AddTask extends AppCompatActivity {
 
                 //This checks to make sure the input is valid, if not will not allow the user to save to database
                 if (dayPass == 0 || monthPass == 0 || yearPass == 0 || titleTask == null || descriptionTask == null||startMinute==0||startHour==0
-                        ||endHour==0||endMinute==0||endHour<startHour||((startHour==endHour)&&endMinute<startMinute))
+                        ||endHour==0||endMinute==0)
                     Toast.makeText(AddTask.this, "Incorrect input, please try again", Toast.LENGTH_SHORT).show();
                 else {
                     MainActivity.dh.writeTask(MainActivity.user.getUserID(), "", new Task(dayPass, monthPass, yearPass, startHour, startMinute, categoryTask, titleTask, descriptionTask, locationTask, false, MainActivity.user));
@@ -185,7 +185,7 @@ public class AddTask extends AppCompatActivity {
             }
         });
         //-------------------------------------------------
-        chooseEndTime = findViewById(R.id.btnTimePickEnd);
+        /*chooseEndTime = findViewById(R.id.btnTimePickEnd);
         chooseEndTime.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -220,6 +220,7 @@ public class AddTask extends AppCompatActivity {
                 timePickerDialogEnd.show();
             }
         });
+        */
     }
 }
 

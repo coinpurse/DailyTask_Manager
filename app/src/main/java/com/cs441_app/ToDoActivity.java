@@ -43,7 +43,7 @@ public class ToDoActivity extends AppCompatActivity implements AdapterView.OnIte
         returnHome.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentHome = new Intent(ToDoActivity.this,MainActivity.class);
+                Intent intentHome = new Intent(ToDoActivity.this,Menu.class);
                 startActivity(intentHome);
             }
         });
