@@ -27,7 +27,6 @@ public class ToDoWrite {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
     }//end of writeList
 
     public static ArrayList<String> readData(Context context){

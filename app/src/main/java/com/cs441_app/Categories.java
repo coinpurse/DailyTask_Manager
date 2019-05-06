@@ -12,8 +12,11 @@ import android.widget.Toast;
 
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.ObjectInputStream;
+import java.io.ObjectOutput;
+import java.io.ObjectOutputStream;
 import java.io.OutputStreamWriter;
 import java.util.ArrayList;
 
@@ -35,12 +38,14 @@ public class Categories extends AppCompatActivity {
     String green;
     String yellow;
 
-    private static ArrayList<String> colorArray = null;
+    public ArrayList<String> colorArray=new ArrayList<String>();
+    int changeMe=0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
+
 
         colorArray = getCategories(Categories.this);
 
@@ -80,31 +85,54 @@ public class Categories extends AppCompatActivity {
                 green = greenText.getText().toString();
                 yellow = yellowText.getText().toString();
 
-                updateCategories(red, blue, green, yellow);
+                updateCategories(red, blue, green, yellow, Categories.this);
                 Toast.makeText(Categories.this, "Categories were updated", Toast.LENGTH_SHORT).show();
 
             }
+
+
         });
 
     }//end of onCreate
 
 
+
+    public ArrayList<String> getCategories(Context context){
+        if(changeMe==0){
+            colorArray.add("Work");
+            colorArray.add("School");
+            colorArray.add("Family");
+            colorArray.add("Friends");
+        }
+        changeMe=1;
+        return colorArray;
+    }
+
+    public void updateCategories (String s1, String s2, String s3, String s4, Context context){
+        colorArray.clear();
+        colorArray.add(s1);
+        colorArray.add(s2);
+        colorArray.add(s3);
+        colorArray.add(s4);
+    }
+
+    /*
     //Used to update the array list of color categories
 
-    public void updateCategories(String one, String two, String three, String four) {
+    public void updateCategories(String one, String two, String three, String four, Context context) {
         try {
-            OutputStreamWriter outputStreamWriter = new OutputStreamWriter(context.openFileOutput("config.txt", Context.MODE_PRIVATE));
-            outputStreamWriter.write(one);
-            outputStreamWriter.write(two);
-            outputStreamWriter.write(three);
-            outputStreamWriter.write(four);
-
-            outputStreamWriter.close();
+            ArrayList<String> catArray = null;
+            FileOutputStream fos = context.openFileOutput(NAMEOFFILE, MODE_PRIVATE);
+            ObjectOutput oos = new ObjectOutputStream(fos);
+            catArray.add(one);
+            catArray.add(two);
+            catArray.add(three);
+            catArray.add(four);
+            oos.writeObject(catArray);
+            oos.close();
         } catch (IOException e) {
             Log.e("Exception", "File write failed: " + e.toString());
         }
-
-
     }
 
     public ArrayList<String> getCategories(Context context) {
@@ -112,21 +140,25 @@ public class Categories extends AppCompatActivity {
         try {
             FileInputStream fis = context.openFileInput(NAMEOFFILE);
             ObjectInputStream ois = new ObjectInputStream(fis);
+            if (ois.readObject()==null){
+                catArray.add("School");
+                catArray.add("Family");
+                catArray.add("Work");
+                catArray.add("Friends");
+            }
+            else
             catArray = (ArrayList<String>) ois.readObject();
         } catch (FileNotFoundException e) {
-            catArray = new ArrayList<>();
-            catArray.add("School");
-            catArray.add("Family");
-            catArray.add("Work");
-            catArray.add("Friends");
             e.printStackTrace();
         } catch (IOException e) {
             e.printStackTrace();
         } catch (ClassNotFoundException e) {
             e.printStackTrace();
-
-
-            return catArray;
         }
 
+
+        return catArray;
     }
+    */
+
+}

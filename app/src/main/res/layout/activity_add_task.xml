@@ -7,7 +7,6 @@
     android:orientation="vertical"
     android:layout_height="match_parent"
     tools:context=".AddTask"
-    android:background="@color/grey"
     >
 
     <Button
@@ -195,23 +194,27 @@
 
         <RadioGroup
             android:layout_width="0dp"
+            android:layout_height="wrap_content"
             android:layout_weight="4"
-            android:orientation="horizontal"
+            android:checkedButton="@+id/onRadioButtonClicked"
+
             android:gravity="center"
-            android:layout_height="wrap_content">
+            android:orientation="horizontal">
 
             <RadioButton
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
                 android:id="@+id/rbYes"
-                android:layout_marginRight="20dp"
-                android:text="Yes"/>
-            <RadioButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
+                android:layout_marginRight="20dp"
+                android:checked="true"
+                android:text="Yes" />
+
+            <RadioButton
                 android:id="@+id/rbNo"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
                 android:layout_marginLeft="20dp"
-                android:text="No"/>
+                android:text="No" />
         </RadioGroup>
 
     </LinearLayout>
@@ -234,10 +237,11 @@
             android:textSize="20sp"
             android:textStyle="bold" />
 
-        <android.support.v7.widget.RecyclerView
+        <Spinner
             android:layout_width="0dp"
-            android:layout_height="match_parent"
-            android:layout_weight="2" />
+            android:layout_height="wrap_content"
+            android:layout_weight="2"
+            android:id="@+id/spnrAddCat"/>
 
 
     </LinearLayout>

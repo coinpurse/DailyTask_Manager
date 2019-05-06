@@ -1,3 +1,10 @@
 <resources>
     <string name="app_name">CS441_app</string>
+
+    <string-array name="array_Categories">
+        <item>Work</item>
+        <item>School</item>
+        <item>Family</item>
+        <item>Friends</item>
+    </string-array>
 </resources>

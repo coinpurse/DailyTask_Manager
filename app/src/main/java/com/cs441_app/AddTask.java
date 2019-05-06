@@ -9,13 +9,18 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.EditText;
+import android.widget.RadioButton;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.TimePicker;
 import android.widget.Toast;
 
+import java.util.ArrayList;
 import java.util.Calendar;
 
 public class AddTask extends AppCompatActivity {
@@ -26,6 +31,7 @@ public class AddTask extends AppCompatActivity {
     private EditText txtTitle;
     private EditText txtDescription;
     private EditText txtLocation;
+
 
 
     //For setting the date
@@ -47,18 +53,19 @@ public class AddTask extends AppCompatActivity {
     private int currentMinute;
     private String amPm;
 
-    private int startHour=0;
-    private int startMinute=0;
+    private int startHour = 0;
+    private int startMinute = 0;
     private String startAmPm;
-    private int endHour=0;
-    private int endMinute=0;
+    private int endHour = 0;
+    private int endMinute = 0;
     private String endAmPm;
 
     private String titleTask = null;
     private String descriptionTask = null;
     private String locationTask = null;
-    private int categoryTask = 0; //change this later on. Going to stay 0 for now
-    //Also add if shareable or not
+    private int categoryTask; //change this later on. Going to stay 0 for now
+    private boolean isShareable=true;
+
 
     private Button mDisplayDate;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
@@ -94,17 +101,18 @@ public class AddTask extends AppCompatActivity {
                 descriptionTask = txtDescription.getText().toString();
                 locationTask = txtLocation.getText().toString();
 
+
                 //Also set the code to add the object to the server,
                 //It should call getInfo() which will store all of the inputs into strings or ints
 
 
-
                 //This checks to make sure the input is valid, if not will not allow the user to save to database
-                if (dayPass == 0 || monthPass == 0 || yearPass == 0 || titleTask == null || descriptionTask == null||startMinute==0||startHour==0
-                        ||endHour==0||endMinute==0)
+                if (dayPass == 0 || monthPass == 0 || yearPass == 0 || titleTask == null || descriptionTask == null || startMinute == 0 || startHour == 0)
                     Toast.makeText(AddTask.this, "Incorrect input, please try again", Toast.LENGTH_SHORT).show();
                 else {
-                    MainActivity.dh.writeTask(MainActivity.user.getUserID(), "", new Task(dayPass, monthPass, yearPass, startHour, startMinute, categoryTask, titleTask, descriptionTask, locationTask, false, MainActivity.user));
+
+
+                    MainActivity.dh.writeTask(MainActivity.user.getUserID(), "", new Task(dayPass, monthPass, yearPass, startHour, startMinute, categoryTask, titleTask, descriptionTask, locationTask, isShareable, MainActivity.user));
                     MainActivity.dh.readBlock(MainActivity.user.getUserID(), "", "04202019");
                     Toast.makeText(AddTask.this, "Task saved to your calendar", Toast.LENGTH_LONG).show();
                     Intent intentHome = new Intent(AddTask.this,
@@ -173,7 +181,7 @@ public class AddTask extends AppCompatActivity {
                         if (hourOfDay == 0) {
                             hourOfDay = 12;
                         }
-                        ;
+
                         if (hourOfDay > 12) {
                             hourOfDay -= 12;
                         }
@@ -184,6 +192,32 @@ public class AddTask extends AppCompatActivity {
                 timePickerDialog.show();
             }
         });
+
+
+
+//Used for the spinner
+        Spinner spinner = (Spinner) findViewById(R.id.spnrAddCat);
+        ArrayList<String> thisArray =new ArrayList<String>();
+// Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
+                R.array.array_Categories, android.R.layout.simple_spinner_item);
+// Specify the layout to use when the list of choices appears
+        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+// Apply the adapter to the spinner
+        spinner.setAdapter(adapter);
+
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                categoryTask=position;
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                categoryTask=0;
+            }
+        });
+
         //-------------------------------------------------
         /*chooseEndTime = findViewById(R.id.btnTimePickEnd);
         chooseEndTime.setOnClickListener(new View.OnClickListener() {
@@ -221,6 +255,24 @@ public class AddTask extends AppCompatActivity {
             }
         });
         */
+    }
+
+    public boolean onRadioButtonClicked(View view) {
+        // Is the button now checked?
+        boolean checked = ((RadioButton) view).isChecked();
+        boolean passThis=true;
+        // Check which radio button was clicked
+        switch (view.getId()) {
+            case R.id.rbYes:
+                if (checked)
+;
+                break;
+            case R.id.rbNo:
+                if (checked)
+                    passThis = false;
+                break;
+        }
+        return passThis;
     }
 }
 

@@ -29,36 +29,17 @@ public class ShowTask extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_task);
 
-        txtTitle=findViewById(R.id.txtTitleShowTask);
-        txtDescription=findViewById(R.id.txtDescriptionShowTask);
-        txtLocation=findViewById(R.id.txtLocationShowTask);
-        txtTime=findViewById(R.id.txtTimeShowTask);
-        txtCategory=findViewById(R.id.txtCategoryShowTask);
-        txtDate=findViewById(R.id.txtDateShowTask);
+        txtTitle = findViewById(R.id.txtTitleShowTask);
+        txtDescription = findViewById(R.id.txtDescriptionShowTask);
+        txtLocation = findViewById(R.id.txtLocationShowTask);
+        txtTime = findViewById(R.id.txtTimeShowTask);
+        txtCategory = findViewById(R.id.txtCategoryShowTask);
+        txtDate = findViewById(R.id.txtDateShowTask);
 
-        /*
-        //Used for test purposes to fill the object with crap
-        //These will be gotten from the object of the selected
-        long Day= 7;
-        long Month= 10;
-        long Year= 2019;
-        long Hour= 5;
-        long Min= 30;
-        int Category= 0;
-        String Title= "Test Title";
-        String Description= "This is a test description\nHopefully with two lines\nLine 3\nLine 4\nLine 5\nLine 3\nLine 4\nLine 5\nLine 3\nLine 4\nLine 5\nLine 3\nLine 4\nLine 5\nLine 3\nLine 4\nLine 5";
-        double IDt= 123456789;
-        String Location= "San Marcos, CA";
-        boolean Share= true;
-        User UserTask=new User();
-
-        Task testTask = new Task( Day, Month, Year, Hour, Min, Category, Title, Description, Location, Share, UserTask);
-
-*/
 
         //Gets the time
-        long startHour=task.getHour();
-        long startMin=task.getMin();
+        long startHour = task.getHour();
+        long startMin = task.getMin();
 
         String TaskTime = (startHour + ":" + startMin);
 
@@ -67,13 +48,28 @@ public class ShowTask extends AppCompatActivity {
         long monthTask = task.getMonth();
         long yearTask = task.getYear();
 
-        String dateTask = (monthTask + "/" + dayTask + "/" +yearTask);
+        String dateTask = (monthTask + "/" + dayTask + "/" + yearTask);
 
         //For the category
-        String cateogoryOutput;
+        String categoryOutput;
         long category = task.getCategory();
-        if(category==0) cateogoryOutput="School";
-        else cateogoryOutput = "Void";
+        if (category == 0) {
+            categoryOutput = "School";
+            txtTitle.setTextColor(getResources().getColor(R.color.red));
+        } else if (category == 1) {
+            categoryOutput = "Work";
+            txtTitle.setTextColor(getResources().getColor(R.color.blue));
+        }
+        else if (category == 2) {
+            categoryOutput = "Family";
+            txtTitle.setTextColor(getResources().getColor(R.color.green));
+        }
+        else {
+            categoryOutput = "Friends";
+            txtTitle.setTextColor(getResources().getColor(R.color.yellow));
+
+        }
+
 
         //setText functions
         txtDate.setText(dateTask);
@@ -82,10 +78,10 @@ public class ShowTask extends AppCompatActivity {
         txtLocation.setText(task.getLocation());
         txtTitle.setText(task.getTitle());
         txtTime.setText(TaskTime);
-        txtCategory.setText(cateogoryOutput);
+        txtCategory.setText(categoryOutput);
 
         //-----------------------------------------------------------
-        btnGoToMain=findViewById(R.id.btnBackToMain);
+        btnGoToMain = findViewById(R.id.btnBackToMain);
         btnGoToMain.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -97,7 +93,7 @@ public class ShowTask extends AppCompatActivity {
 
     }
 
-    public static void getTaskFromMain(Task t){
+    public static void getTaskFromMain(Task t) {
         task = t;
     }
 }

@@ -38,6 +38,7 @@
             android:layout_height="wrap_content"
             android:layout_marginLeft="15dp"
             android:hint="Select Date"
+            android:textStyle="bold"
             android:textSize="50sp" />
 
     </LinearLayout>
@@ -47,6 +48,7 @@
         android:id="@+id/TaskList"
         android:layout_width="match_parent"
         android:layout_height="558dp"
+        android:layout_marginTop="45sp"
         android:layout_marginStart="8dp"
         android:layout_marginEnd="8dp"
         android:layout_marginBottom="8dp"
