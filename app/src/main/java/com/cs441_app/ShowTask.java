@@ -10,6 +10,9 @@ import android.widget.TextView;
 
 import org.w3c.dom.Text;
 
+import java.lang.reflect.Array;
+import java.util.ArrayList;
+
 public class ShowTask extends AppCompatActivity {
 
     private Button btnGoToMain;
@@ -53,6 +56,7 @@ public class ShowTask extends AppCompatActivity {
         //For the category
         String categoryOutput;
         long category = task.getCategory();
+        
         if (category == 0) {
             categoryOutput = "School";
             txtTitle.setTextColor(getResources().getColor(R.color.red));
