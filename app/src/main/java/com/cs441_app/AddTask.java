@@ -3,6 +3,7 @@ package com.cs441_app;
 import android.app.DatePickerDialog;
 import android.app.TimePickerDialog;
 import android.content.Intent;
+import android.database.Cursor;
 import android.graphics.Color;
 import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.AppCompatActivity;
@@ -66,6 +67,9 @@ public class AddTask extends AppCompatActivity {
     private int categoryTask; //change this later on. Going to stay 0 for now
     private boolean isShareable=true;
 
+    InternalDatabase myDB;
+    ArrayList<String> colorArray;
+
 
     private Button mDisplayDate;
     private DatePickerDialog.OnDateSetListener mDateSetListener;
@@ -76,6 +80,32 @@ public class AddTask extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_add_task);
 
+        myDB = new InternalDatabase(this);
+        colorArray = new ArrayList<>();
+
+        int i = 0;
+        Cursor data = myDB.getAllData();
+        while (data.moveToNext()) {
+            i++;
+            colorArray = new ArrayList<>();
+            String c0 = (data.getString(0));
+            String c1 = (data.getString(1));
+            String c2 = (data.getString(2));
+            String c3 = (data.getString(3));
+
+            colorArray.add(c0);
+            colorArray.add(c1);
+            colorArray.add(c2);
+            colorArray.add(c3);
+
+        }
+
+        if (i==0) {
+            colorArray.add("Work");
+            colorArray.add("School");
+            colorArray.add("Friends");
+            colorArray.add("Family");
+        }
 
         txtTitle = findViewById(R.id.txtTitleTask);
         txtDescription = findViewById(R.id.txtDescriptionTask);
@@ -199,8 +229,7 @@ public class AddTask extends AppCompatActivity {
         Spinner spinner = (Spinner) findViewById(R.id.spnrAddCat);
         ArrayList<String> thisArray =new ArrayList<String>();
 // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> adapter = ArrayAdapter.createFromResource(this,
-                R.array.array_Categories, android.R.layout.simple_spinner_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this,android.R.layout.simple_list_item_1,colorArray);
 // Specify the layout to use when the list of choices appears
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
 // Apply the adapter to the spinner

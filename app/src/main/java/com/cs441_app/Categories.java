@@ -2,6 +2,7 @@ package com.cs441_app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
@@ -25,6 +26,10 @@ public class Categories extends AppCompatActivity {
     public static final String NAMEOFFILE = "Colors.dat";
 
 
+    //NEW
+    InternalDatabase myDb;
+//
+
     private Button openMenu;
     private Button updateColors;
 
@@ -38,16 +43,13 @@ public class Categories extends AppCompatActivity {
     String green;
     String yellow;
 
-    public ArrayList<String> colorArray=new ArrayList<String>();
-    int changeMe=0;
+    public ArrayList<String> colorArray = new ArrayList<String>();
+    int changeMe = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_categories);
-
-
-        colorArray = getCategories(Categories.this);
 
         redText = findViewById(R.id.etRed);
         blueText = findViewById(R.id.etBlue);
@@ -55,16 +57,46 @@ public class Categories extends AppCompatActivity {
         yellowText = findViewById(R.id.etYellow);
 
 
-        red = colorArray.get(0);
-        blue = colorArray.get(1);
-        green = colorArray.get(2);
-        yellow = colorArray.get(3);
+
+        //NEW
+        myDb = new InternalDatabase(this);
+
+        Cursor data = myDb.getAllData();
+
+       // boolean isInsert = myDb.insertDara(red, blue, green, yellow);
 
 
-        redText.setText(red);
-        blueText.setText(blue);
-        greenText.setText(green);
-        yellowText.setText(yellow);
+        colorArray = new ArrayList<String>();
+
+        int i = 0;
+        while (data.moveToNext()) {
+            i++;
+            colorArray = new ArrayList<>();
+            String c0 = (data.getString(0));
+            String c1 = (data.getString(1));
+            String c2 = (data.getString(2));
+            String c3 = (data.getString(3));
+
+            colorArray.add(c0);
+            colorArray.add(c1);
+            colorArray.add(c2);
+            colorArray.add(c3);
+
+        }
+
+        if (i==0) {
+            colorArray.add("Work");
+            colorArray.add("School");
+            colorArray.add("Friends");
+            colorArray.add("Family");
+        }
+
+
+
+        redText.setText(colorArray.get(0));
+        blueText.setText(colorArray.get(1));
+        greenText.setText(colorArray.get(2));
+        yellowText.setText(colorArray.get(3));
 
 
         openMenu = findViewById(R.id.btnMenuCat);
@@ -85,7 +117,7 @@ public class Categories extends AppCompatActivity {
                 green = greenText.getText().toString();
                 yellow = yellowText.getText().toString();
 
-                updateCategories(red, blue, green, yellow, Categories.this);
+                boolean isInsert = myDb.insertDara(red, blue, green, yellow);
                 Toast.makeText(Categories.this, "Categories were updated", Toast.LENGTH_SHORT).show();
 
             }
@@ -96,25 +128,6 @@ public class Categories extends AppCompatActivity {
     }//end of onCreate
 
 
-
-    public ArrayList<String> getCategories(Context context){
-        if(changeMe==0){
-            colorArray.add("Work");
-            colorArray.add("School");
-            colorArray.add("Family");
-            colorArray.add("Friends");
-        }
-        changeMe=1;
-        return colorArray;
-    }
-
-    public void updateCategories (String s1, String s2, String s3, String s4, Context context){
-        colorArray.clear();
-        colorArray.add(s1);
-        colorArray.add(s2);
-        colorArray.add(s3);
-        colorArray.add(s4);
-    }
 
     /*
     //Used to update the array list of color categories

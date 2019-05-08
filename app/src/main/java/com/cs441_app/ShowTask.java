@@ -1,10 +1,12 @@
 package com.cs441_app;
 
 import android.content.Intent;
+import android.database.Cursor;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.TextView;
 
@@ -26,11 +28,42 @@ public class ShowTask extends AppCompatActivity {
 
     private static Task task;
 
+    InternalDatabase myDB;
+    private ArrayList<String> colorArray;
+
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_show_task);
+
+        myDB = new InternalDatabase(this);
+        colorArray = new ArrayList<String>();
+
+        int i = 0;
+        Cursor data = myDB.getAllData();
+        while (data.moveToNext()) {
+            i++;
+            colorArray = new ArrayList<>();
+            String c0 = (data.getString(0));
+            String c1 = (data.getString(1));
+            String c2 = (data.getString(2));
+            String c3 = (data.getString(3));
+
+            colorArray.add(c0);
+            colorArray.add(c1);
+            colorArray.add(c2);
+            colorArray.add(c3);
+
+        }
+
+        if (i==0) {
+            colorArray.add("Work");
+            colorArray.add("School");
+            colorArray.add("Friends");
+            colorArray.add("Family");
+        }
 
         txtTitle = findViewById(R.id.txtTitleShowTask);
         txtDescription = findViewById(R.id.txtDescriptionShowTask);
@@ -56,20 +89,20 @@ public class ShowTask extends AppCompatActivity {
         //For the category
         String categoryOutput;
         long category = task.getCategory();
-        
+
         if (category == 0) {
-            categoryOutput = "School";
+            categoryOutput = colorArray.get(0);
             txtTitle.setTextColor(getResources().getColor(R.color.red));
         } else if (category == 1) {
-            categoryOutput = "Work";
+            categoryOutput = colorArray.get(1);
             txtTitle.setTextColor(getResources().getColor(R.color.blue));
         }
         else if (category == 2) {
-            categoryOutput = "Family";
+            categoryOutput = colorArray.get(2);
             txtTitle.setTextColor(getResources().getColor(R.color.green));
         }
         else {
-            categoryOutput = "Friends";
+            categoryOutput = colorArray.get(3);
             txtTitle.setTextColor(getResources().getColor(R.color.yellow));
 
         }
