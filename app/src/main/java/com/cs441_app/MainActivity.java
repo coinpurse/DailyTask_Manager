@@ -2,7 +2,10 @@ package com.cs441_app;
 
 
 
+import android.content.res.Configuration;
 import android.support.v4.app.DialogFragment;
+import android.support.v4.widget.DrawerLayout;
+import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.widget.*;
@@ -19,6 +22,8 @@ import android.view.View;
 import android.widget.Button;
 import android.widget.DatePicker;
 import android.widget.TextView;
+import android.support.v7.widget.Toolbar;
+import android.view.Menu;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
@@ -45,6 +50,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 500;
 
+    // Github Test
     // Task view stuff
     private static ListView listview;
     private static ArrayList<Task> itemArray;
@@ -57,9 +63,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     //-------------------
 
     //Buttons
-    private Button btnAddTask;
-    private Button btnGoToTask;
-    private Button btnTodo;
+    private Button btnMenu;
+    //private Button btnGoToTask;
+    //private Button btnTodo;
     //-----------------------
 
     private static int day;
@@ -67,10 +73,67 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static int year;
     private static boolean calendarcreate;
 
+    private ActionBarDrawerToggle actionBarDrawerToggle;
+    private DrawerLayout drawerLayout;
+
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        // Inflate the menu; this adds items to the action bar if it is present.
+        getMenuInflater().inflate(R.menu.add_task, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(MenuItem item) {
+        switch (item.getItemId()) {
+            case R.id.action_add_task:
+                Intent intentAddTask = new Intent(MainActivity.this,
+                        AddTask.class);
+                startActivity(intentAddTask);
+                return true;
+            case R.id.action_nav_drawer:
+                return true;
+            default:
+                // If we got here, the user's action was not recognized.
+                // Invoke the superclass to handle it.
+                return super.onOptionsItemSelected(item);
+
+        }
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+        actionBarDrawerToggle.syncState();
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        um = UserManager.getInstance();
+
+            Toolbar myToolbar = findViewById(R.id.my_toolbar);
+            myToolbar.setTitle("My Calendar");
+            drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
+            setSupportActionBar(myToolbar);
+
+
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+            um.populateNavList(MainActivity.this, getWindow().getDecorView().getRootView());
+            actionBarDrawerToggle = new ActionBarDrawerToggle(this, drawerLayout, myToolbar, R.string.app_name, R.string.app_name);
+            drawerLayout.addDrawerListener(actionBarDrawerToggle);
+
+        btnMenu=findViewById(R.id.btnMenuMain);
+        btnMenu.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentMenu = new Intent(MainActivity.this,Menu.class);
+                startActivity(intentMenu);
+            }
+        });
 
 
         //------------------------------------------------------MAKE THIS INTO A FUNCTION
@@ -120,25 +183,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
 
-        // Get task list for the current date
-        //dh.readBlock(user.getUserID(),"", dh.generateBlockID(new Task(day,month,year)));
-
-        //um.populateCalendar(dh.generateBlockID(new Task(day,month,year)));
-        //----------------------------------------------------------
-
-        btnAddTask = findViewById(R.id.btnAddObject);
-
-        btnAddTask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentAddTask = new Intent(MainActivity.this,
-                        AddTask.class);
-                startActivity(intentAddTask);
-            }
-        });
-
-        //-----------------------------------------------------
-
 
         mDisplayDate = (TextView) findViewById(R.id.tvDate);
         mDisplayDate.setOnClickListener(new View.OnClickListener() {
@@ -171,26 +215,6 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 um.populateCalendar(dh.generateBlockID(new Task(dayOfMonth,month,year)));
             }
         };
-        //-----------------------------------------------------------------------------
-        btnGoToTask = findViewById(R.id.btnGoToTask);
-        btnGoToTask.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentGoToTask = new Intent(MainActivity.this,
-                        ShowTask.class);
-                startActivity(intentGoToTask);
-            }
-        });
-
-        //-----------------------------------------------------------------------
-        btnTodo=findViewById(R.id.btnToDoList);
-        btnTodo.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                Intent intentToDo = new Intent(MainActivity.this,ToDoActivity.class);
-                startActivity(intentToDo);
-            }
-        });
     }
 
     @Override
@@ -212,6 +236,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public static void onUserCreation(){
         um.populateCalendar(dh.generateBlockID(new Task(day,month,year)));
         login = true;
+        usercreated = true;
     }
 
     @Override
@@ -224,7 +249,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             if (resultCode == RESULT_OK) {
                 // Successfully signed in
                 FBuser = FirebaseAuth.getInstance().getCurrentUser();
-                um = new UserManager();
+                um = UserManager.getInstance();
                 dh = new Database_Handler();
                 user = new User(FBuser.getUid(),FBuser.getDisplayName());
                 dh.createUser(user);
@@ -245,39 +270,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         }
     }
+
 }
 
-
-/*
-    @Override
-    protected void onCreate(Bundle savedInstanceState) {
-        super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
-
-        dh = new Database_Handler();
-        user = dh.createUser("Tyler");
-
-        final Button button = findViewById(R.id.button);
-        button.setOnClickListener(new View.OnClickListener() {
-            public void onClick(View v) {
-                // Code here executes on main thread after user presses button
-                Toast.makeText(getApplicationContext(), "hello", Toast.LENGTH_SHORT);
-                Task t = new Task(16,4,2019,20,30,"This is the Title", "This is the Description","San Marcos", true, user);
-                Task a = new Task(16,4,2019,22,00,"This is another Title", "This is the Description","San Marcos", true, user);
-                Task b = new Task(16,4,2019,15,30,"This is a different Title", "This is the Description","San Marcos", true, user);
-                Task c = new Task(16,4,2019,5,00,"This is the last Title", "This is the Description","San Marcos", true, user);
-                dh.writeTask(user.getUserID(),"",t);
-                dh.writeTask(user.getUserID(),"",a);
-                dh.writeTask(user.getUserID(),"",b);
-                dh.writeTask(user.getUserID(),"",c);
-
-                dh.readDay(user.getUserID(),"","04162019");
-
-                System.out.println("hello");
-            }
-        });
-
-
-    }*/
 
 

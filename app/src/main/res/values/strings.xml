@@ -1,3 +1,14 @@
 <resources>
     <string name="app_name">CS441_app</string>
+    <string name="action_settings">CS441_app</string>
+    <string name="my_calendar">My Calendar</string>
+    <string name="nav">Navigation</string>
+    <string name="drawer_open">Open navigation drawer</string>
+    <string name="drawer_close">Close navigation drawer</string>
+    <string-array name="array_Categories">
+        <item>Work</item>
+        <item>School</item>
+        <item>Family</item>
+        <item>Friends</item>
+    </string-array>
 </resources>

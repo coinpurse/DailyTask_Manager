@@ -60,7 +60,17 @@ public class Task {
 
     @Override
     public String toString() {
-        return title + "  " +Long.toString(hour) + ":" + Long.toString(min);
+        String print = title + "             ";
+        if(hour > 11){
+            if(hour == 12) {
+                print = print + Long.toString(hour) + ":" + Long.toString(min) + "pm";
+            }
+            else
+                print = print + Long.toString(hour - 12) + ":" + Long.toString(min) + "pm";
+        }
+        else
+            print = print + Long.toString(hour) + ":" + Long.toString(min) + "am";
+        return print;
     }
 
     public String getId() {
