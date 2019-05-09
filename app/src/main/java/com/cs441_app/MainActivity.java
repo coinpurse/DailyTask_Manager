@@ -22,17 +22,28 @@ import android.widget.TextView;
 import android.widget.EditText;
 import android.widget.TimePicker;
 
+import com.firebase.ui.auth.AuthUI;
+import com.firebase.ui.auth.IdpResponse;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Calendar;
+import java.util.List;
 
 
 public class MainActivity extends AppCompatActivity implements AdapterView.OnItemClickListener{
 
     public static Database_Handler dh;
+    public static UserManager um;
     public static User user;
+    private static FirebaseUser FBuser;
     private static boolean usercreated;
+    private static boolean login;
 
     private static final String TAG = "MainActivity";
+    private static final int RC_SIGN_IN = 500;
 
     // Github Test
     // Task view stuff
@@ -76,6 +87,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         //------------------------------------------------------MAKE THIS INTO A FUNCTION
         mDisplayDate = (TextView) findViewById(R.id.tvDate);
 
+        // First Time calendar creation
         if(!calendarcreate) {
             Calendar cal = Calendar.getInstance();
             year = cal.get(Calendar.YEAR);
@@ -84,8 +96,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             month = month + 1;
             calendarcreate = true;
         }
+
+
         String date = month + "/" + day + "/" + year;
         mDisplayDate.setText(date);
+
         // Task List
         if(!itemarraycreated){
             itemArray = new ArrayList();
@@ -96,17 +111,30 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         listview.setAdapter(adapterArray);
         listview.setOnItemClickListener(MainActivity.this);
 
-        // Create Database Handler and Create New user if the app is open for the first time
-        dh = new Database_Handler();
-
+        // User sign-in
         if(!usercreated) {
-            user = dh.createUser("Tyler");
+            //user = dh.createUser("Tyler");
+            List<AuthUI.IdpConfig> providers = Arrays.asList(
+                    new AuthUI.IdpConfig.EmailBuilder().build(),
+                    new AuthUI.IdpConfig.GoogleBuilder().build());
+            startActivityForResult(
+                    AuthUI.getInstance()
+                            .createSignInIntentBuilder()
+                            .setAvailableProviders(providers)
+                            .build(),
+                    RC_SIGN_IN);
             usercreated = true;
+        }
+
+        if(login){
+            um.populateCalendar(dh.generateBlockID(new Task(day,month,year)));
         }
 
 
         // Get task list for the current date
-        dh.readBlock(user.getUserID(),"", dh.generateBlockID(new Task(day,month,year)));
+        //dh.readBlock(user.getUserID(),"", dh.generateBlockID(new Task(day,month,year)));
+
+        //um.populateCalendar(dh.generateBlockID(new Task(day,month,year)));
         //----------------------------------------------------------
 
         btnAddTask = findViewById(R.id.btnAddObject);
@@ -150,7 +178,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 year = Year;
                 String date = month + "/" + dayOfMonth + "/" + year;
                 mDisplayDate.setText(date);
-                dh.readBlock(user.getUserID(),"", dh.generateBlockID(new Task(dayOfMonth,month,year)));
+                //dh.readBlock(user.getUserID(),"", dh.generateBlockID(new Task(dayOfMonth,month,year)));
+                um.populateCalendar(dh.generateBlockID(new Task(dayOfMonth,month,year)));
             }
         };
         //-----------------------------------------------------------------------------
@@ -193,7 +222,46 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
     }
+
+    public static void onUserCreation(){
+        um.populateCalendar(dh.generateBlockID(new Task(day,month,year)));
+        login = true;
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        if (requestCode == RC_SIGN_IN) {
+            IdpResponse response = IdpResponse.fromResultIntent(data);
+
+            if (resultCode == RESULT_OK) {
+                // Successfully signed in
+                FBuser = FirebaseAuth.getInstance().getCurrentUser();
+                um = new UserManager();
+                dh = new Database_Handler();
+                user = new User(FBuser.getUid(),FBuser.getDisplayName());
+                dh.createUser(user);
+            } else {
+                // Sign in failed. If response is null the user canceled the
+                // sign-in flow using the back button. Otherwise check
+                // response.getError().getErrorCode() and handle the error.
+                List<AuthUI.IdpConfig> providers = Arrays.asList(
+                        new AuthUI.IdpConfig.EmailBuilder().build(),
+                        new AuthUI.IdpConfig.GoogleBuilder().build());
+                startActivityForResult(
+                        AuthUI.getInstance()
+                                .createSignInIntentBuilder()
+                                .setAvailableProviders(providers)
+                                .build(),
+                        RC_SIGN_IN);
+                usercreated = true;
+            }
+        }
+    }
 }
+
+
 /*
     @Override
     protected void onCreate(Bundle savedInstanceState) {
