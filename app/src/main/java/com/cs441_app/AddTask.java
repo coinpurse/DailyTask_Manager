@@ -284,22 +284,5 @@ public class AddTask extends AppCompatActivity {
         */
     }
 
-    public boolean onRadioButtonClicked(View view) {
-        // Is the button now checked?
-        boolean checked = ((RadioButton) view).isChecked();
-        boolean passThis=true;
-        // Check which radio button was clicked
-        switch (view.getId()) {
-            case R.id.rbYes:
-                if (checked)
-;
-                break;
-            case R.id.rbNo:
-                if (checked)
-                    passThis = false;
-                break;
-        }
-        return passThis;
-    }
 }
 
