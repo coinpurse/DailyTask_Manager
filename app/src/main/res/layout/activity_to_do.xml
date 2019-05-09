@@ -1,25 +1,67 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-    <LinearLayout tools:context=".ToDoActivity" android:orientation="vertical" android:layout_height="match_parent" android:layout_width="match_parent" xmlns:tools="http://schemas.android.com/tools" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:android="http://schemas.android.com/apk/res/android">
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    tools:context=".ToDoActivity">
 
 
-    -<LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_margin="15sp">
+    <Button
+        android:id="@+id/btnToDoGoHome"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Menu" />
 
-    <EditText android:layout_height="wrap_content" android:layout_width="0dp" android:hint="Enter New Item For List" android:layout_weight="4" android:id="@+id/etxtToDoAdd"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="15sp"
+        android:layout_marginRight="15sp"
+        android:orientation="horizontal">
 
-    <Button android:layout_height="wrap_content" android:layout_width="0dp" android:layout_weight="1" android:id="@+id/btnToDoAddTask" android:text="Add"/>
+        <EditText
+            android:id="@+id/etxtToDoAdd"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="4"
+            android:hint="Enter New Item For List" />
 
-</LinearLayout>
+        <Button
+            android:id="@+id/btnToDoAddTask"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:text="Add" />
+
+    </LinearLayout>
 
 
-    -<LinearLayout android:orientation="horizontal" android:layout_height="wrap_content" android:layout_width="match_parent">
+    -
 
-    <TextView android:layout_height="wrap_content" android:layout_width="0dp" android:layout_weight="4" android:text="Click an item below to remove from list" android:textStyle="italic" android:layout_marginLeft="20dp"/>
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal">
 
-    <Button android:layout_height="wrap_content" android:layout_width="0dp" android:layout_weight="1" android:id="@+id/btnToDoGoHome" android:text="Home" android:layout_marginRight="15dp"/>
+        <TextView
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="20dp"
+            android:layout_weight="4"
+            android:text="Click an item below to remove from list"
+            android:textStyle="italic" />
 
-</LinearLayout>
 
-    <ListView android:layout_height="wrap_content" android:layout_width="match_parent" android:layout_margin="7dp" android:id="@+id/listToDo"> </ListView>
+
+    </LinearLayout>
+
+    <ListView
+        android:id="@+id/listToDo"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="7dp"></ListView>
 
 </LinearLayout>
