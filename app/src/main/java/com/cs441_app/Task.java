@@ -70,6 +70,9 @@ public class Task {
         }
         else
             print = print + Long.toString(hour) + ":" + Long.toString(min) + "am";
+        if(share == true){
+            print = print + "    \n(Synced from " + group.getName() + ")";
+        }
         return print;
     }
 

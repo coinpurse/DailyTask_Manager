@@ -47,6 +47,9 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static boolean usercreated;
     private static boolean login;
 
+    public static Group group;
+    public static boolean groupview;
+
     private static final String TAG = "MainActivity";
     private static final int RC_SIGN_IN = 500;
 
@@ -115,7 +118,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         um = UserManager.getInstance();
 
             Toolbar myToolbar = findViewById(R.id.my_toolbar);
-            myToolbar.setTitle("My Calendar");
+            if(groupview)
+                myToolbar.setTitle(group.getName() + "'s Calendar");
+            else
+                myToolbar.setTitle("My Calendar");
             drawerLayout = (DrawerLayout) findViewById(R.id.drawer_layout);
             setSupportActionBar(myToolbar);
 
@@ -179,7 +185,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
 
         if(login){
-            um.populateCalendar(dh.generateBlockID(new Task(day,month,year)));
+            if(groupview)
+                dh.readBlock(user.getUserID(), group.getGroupID(), dh.generateBlockID(new Task(day,month,year)), new Group(), false);
+            else
+                um.populateCalendar(dh.generateBlockID(new Task(day,month,year)));
         }
 
 
@@ -212,7 +221,10 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
                 String date = month + "/" + dayOfMonth + "/" + year;
                 mDisplayDate.setText(date);
                 //dh.readBlock(user.getUserID(),"", dh.generateBlockID(new Task(dayOfMonth,month,year)));
-                um.populateCalendar(dh.generateBlockID(new Task(dayOfMonth,month,year)));
+                if(groupview)
+                    dh.readBlock(user.getUserID(), group.getGroupID(), dh.generateBlockID(new Task(day,month,year)), new Group(), false);
+                else
+                    um.populateCalendar(dh.generateBlockID(new Task(dayOfMonth,month,year)));
             }
         };
     }
@@ -230,11 +242,15 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         for(int i = 0; i < list.size(); i++){
             adapterArray.add(list.get(i));
         }
+        adapterArray.notifyDataSetChanged();
 
     }
 
     public static void onUserCreation(){
-        um.populateCalendar(dh.generateBlockID(new Task(day,month,year)));
+        if(groupview)
+            dh.readBlock(user.getUserID(), group.getGroupID(), dh.generateBlockID(new Task(day,month,year)), new Group(), false);
+        else
+            um.populateCalendar(dh.generateBlockID(new Task(day,month,year)));
         login = true;
         usercreated = true;
     }
@@ -271,6 +287,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    public static boolean isUsercreated() {
+        return usercreated;
+    }
+
+    public static void setUsercreated(boolean usercreated) {
+        MainActivity.usercreated = usercreated;
+    }
+
+    public static boolean isLogin() {
+        return login;
+    }
+
+    public static void setLogin(boolean login) {
+        MainActivity.login = login;
+    }
 }
 
 
