@@ -40,7 +40,9 @@ public class Database_Handler {
         v = new ArrayList();
     }
 
-
+    public FirebaseFirestore getDb(){
+        return db;
+    }
     /**
      * Writes a task to either a group calendar or an account calendar. If the GroupID parameter is empty, then it will save the task to the users calendar. If a GroupID is provided, then
      * it will write the task to that groups calendar
@@ -173,7 +175,7 @@ public class Database_Handler {
      * @param GroupID The group the message list comes from
      */
     public void readMessageList(String GroupID){
-        db.collection("Groups").document(GroupID).collection("Messages").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        db.collection("Groups").document(GroupID).collection("Messages").orderBy("timestamp").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
                 if (task.isSuccessful()) {
@@ -181,12 +183,12 @@ public class Database_Handler {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Log.d(TAG, document.getId() + " => " + document.getData());
                         Map info = document.getData();
-                        Message m = new Message((String) info.get("content"), (String) info.get("authorName"), (String) info.get("authorID"), (Long) info.get("day"), (Long) info.get("month"), (Long) info.get("year"), (Long) info.get("hour"), (Long) info.get("min"));
+                        Message m = new Message((String) info.get("content"), (String) info.get("authorName"), (String) info.get("authorID"), (String) info.get("timestamp"));
                         list.add(m);
                     }
                     // full array list is here, put function call to update view here.
                     System.out.println("Size of list: " + list.size());
-                    // STATIC FUNCTION GOES HERE
+                    Messenger.readMessageList(list);
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
@@ -212,7 +214,7 @@ public class Database_Handler {
                     }
                     // full array list is here, put function call to update view here.
                     System.out.println("Size of list: " + list.size());
-                    // STATIC FUNCTION GOES HERE
+                    MemberList.updateMembers(list);
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
