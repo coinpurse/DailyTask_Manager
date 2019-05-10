@@ -15,7 +15,7 @@ import android.widget.ListView;
 
 import java.util.ArrayList;
 
-public class GroupList extends AppCompatActivity implements AdapterView.OnItemClickListener{
+public class GroupList extends AppCompatActivity{
 
     private ActionBarDrawerToggle actionBarDrawerToggle;
     private DrawerLayout drawerLayout;
@@ -80,7 +80,6 @@ public class GroupList extends AppCompatActivity implements AdapterView.OnItemCl
         adapterArray = new GroupAdapter(itemArray, this);
         listview = findViewById(R.id.GroupList);
         listview.setAdapter(adapterArray);
-        listview.setOnItemClickListener(GroupList.this);
 
         MainActivity.dh.readGroups_ByParticipation(MainActivity.user.getUserID());
     }
@@ -93,8 +92,4 @@ public class GroupList extends AppCompatActivity implements AdapterView.OnItemCl
         adapterArray.notifyDataSetChanged();
     }
 
-    @Override
-    public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-
-    }
 }

@@ -140,7 +140,10 @@ public class AddTask extends AppCompatActivity {
                 if (dayPass == 0 || monthPass == 0 || yearPass == 0 || titleTask == null || descriptionTask == null || startMinute == 0 || startHour == 0)
                     Toast.makeText(AddTask.this, "Incorrect input, please try again", Toast.LENGTH_SHORT).show();
                 else {
-                    MainActivity.dh.writeTask(MainActivity.user.getUserID(), "", new Task(dayPass, monthPass, yearPass, startHour, startMinute, categoryTask, titleTask, descriptionTask, locationTask, false, MainActivity.user));
+                    if(MainActivity.groupview)
+                        MainActivity.dh.writeTask(MainActivity.user.getUserID(), MainActivity.group.getGroupID(), new Task(dayPass, monthPass, yearPass, startHour, startMinute, categoryTask, titleTask, descriptionTask, locationTask, false, MainActivity.user));
+                    else
+                        MainActivity.dh.writeTask(MainActivity.user.getUserID(), "", new Task(dayPass, monthPass, yearPass, startHour, startMinute, categoryTask, titleTask, descriptionTask, locationTask, false, MainActivity.user));
                     //MainActivity.dh.readBlock(MainActivity.user.getUserID(), "", "04202019");
                     Toast.makeText(AddTask.this, "Task saved to your calendar", Toast.LENGTH_LONG).show();
                     Intent intentHome = new Intent(AddTask.this,

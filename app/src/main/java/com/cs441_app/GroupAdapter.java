@@ -1,6 +1,8 @@
 package com.cs441_app;
 
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -74,6 +76,16 @@ public class GroupAdapter extends BaseAdapter implements ListAdapter {
             }
         });
 
+        view.setOnClickListener(new View.OnClickListener(){
+            @Override
+            public void onClick(View v) {
+                MainActivity.groupview = true;
+                MainActivity.group = list.get(position);
+                Intent intentHome = new Intent(context,
+                        MainActivity.class);
+                context.startActivity(intentHome);
+            }
+        });
         return view;
     }
 }

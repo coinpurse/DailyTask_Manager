@@ -24,6 +24,8 @@ public class UserManager implements AdapterView.OnItemClickListener{
     private static Context context;
     private static View navView;
 
+    private static ArrayList<Task> list;
+
     public void populateNavList(Context c, View v){
        context = c;
        navView = v;
@@ -32,9 +34,11 @@ public class UserManager implements AdapterView.OnItemClickListener{
         mAdapter = new ArrayAdapter<String>(c, android.R.layout.simple_list_item_1, osArray);
         mDrawerList.setAdapter(mAdapter);
         mDrawerList.setOnItemClickListener(this);
+
     }
 
     private UserManager(){
+        list = new ArrayList();
     }
 
     public static UserManager getInstance(){
@@ -45,12 +49,14 @@ public class UserManager implements AdapterView.OnItemClickListener{
     }
 
     public void populateCalendar(String BlockID){
+        list.clear();
         MainActivity.dh.readBlock(MainActivity.user.getUserID(), "", BlockID, new Group(), false);
         MainActivity.dh.readGroups_BySync(MainActivity.user.getUserID(), BlockID);
     }
 
     public static void updateTaskList(ArrayList<Task> t_list){
-        MainActivity.updateTaskList(t_list);
+        list.addAll(t_list);
+        MainActivity.updateTaskList(list);
     }
 
     public static void updateGroupList(ArrayList<Group> g_list, String BlockID){
@@ -66,6 +72,7 @@ public class UserManager implements AdapterView.OnItemClickListener{
 
         switch (position) {
             case 0:
+                MainActivity.groupview = false;
                 intentNav = new Intent(context,
                         MainActivity.class);
                 context.startActivity(intentNav);
@@ -87,6 +94,7 @@ public class UserManager implements AdapterView.OnItemClickListener{
                 context.startActivity(intentNav);
                 break;
             case 4:
+                MainActivity.groupview = false;
                 intentNav = new Intent(context,
                         MainActivity.class);
                 final Intent intent = intentNav;

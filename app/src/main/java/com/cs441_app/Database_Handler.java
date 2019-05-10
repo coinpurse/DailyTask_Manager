@@ -348,11 +348,20 @@ public class Database_Handler {
                             Map info = document.getData();
                             Task t = new Task((long) info.get("day"), (long) info.get("month"), (long) info.get("year"), (long) info.get("hour"), (long) info.get("min"), (long) info.get("category"), (String) info.get("title"), (String) info.get("description"), (String) info.get("location"), (boolean) info.get("share")
                                     , new User((String) ((Map) info.get("user")).get("userID"), (String) ((Map) info.get("user")).get("Name")));
+                            if(share){
+                                t.setShare(true);
+                                t.setGroup(group);
+                            }
                             list.add(t);
                         }
+
                         // full array list is here, put function call to update view here.
                         System.out.println("Size of list: " + list.size());
-                        // STATIC FUNCTION GOES HERE
+                        if(share){
+                            UserManager.updateTaskList(list);
+                        }
+                        else
+                            MainActivity.updateTaskList(list);
                     } else {
                         Log.d(TAG, "Error getting documents: ", task.getException());
                     }
