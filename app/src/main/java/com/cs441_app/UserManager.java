@@ -2,6 +2,7 @@ package com.cs441_app;
 
 import android.content.Context;
 import android.content.Intent;
+import android.support.annotation.NonNull;
 import android.support.v7.app.AppCompatActivity;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -9,6 +10,9 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+
+import com.firebase.ui.auth.AuthUI;
+import com.google.android.gms.tasks.OnCompleteListener;
 
 import java.util.ArrayList;
 
@@ -68,12 +72,12 @@ public class UserManager implements AdapterView.OnItemClickListener{
                 break;
             case 1:
                 intentNav = new Intent(context,
-                        MainActivity.class);
+                        GroupList.class);
                 context.startActivity(intentNav);
                 break;
             case 2:
                 intentNav = new Intent(context,
-                        MainActivity.class);
+                        GroupFinder.class);
                 context.startActivity(intentNav);
                 break;
             case 3:
@@ -85,7 +89,17 @@ public class UserManager implements AdapterView.OnItemClickListener{
             case 4:
                 intentNav = new Intent(context,
                         MainActivity.class);
-                context.startActivity(intentNav);
+                final Intent intent = intentNav;
+                AuthUI.getInstance()
+                        .signOut(context)
+                        .addOnCompleteListener(new OnCompleteListener<Void>() {
+                            public void onComplete(@NonNull com.google.android.gms.tasks.Task<Void> task) {
+                                MainActivity.user = null;
+                                MainActivity.setUsercreated(false);
+                                MainActivity.setLogin(false);
+                                context.startActivity(intent);
+                            }
+                        });
                 break;
             default:
                 // If we got here, the user's action was not recognized.

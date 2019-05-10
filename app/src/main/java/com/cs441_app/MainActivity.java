@@ -271,6 +271,21 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
         }
     }
 
+    public static boolean isUsercreated() {
+        return usercreated;
+    }
+
+    public static void setUsercreated(boolean usercreated) {
+        MainActivity.usercreated = usercreated;
+    }
+
+    public static boolean isLogin() {
+        return login;
+    }
+
+    public static void setLogin(boolean login) {
+        MainActivity.login = login;
+    }
 }
 
 

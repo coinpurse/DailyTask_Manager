@@ -20,6 +20,17 @@ public class Group {
         sync = false;
     }
 
+    public Group(String GroupID, String Name, boolean Sync){
+        groupID = GroupID;
+        name = Name;
+        sync = Sync;
+    }
+
+    @Override
+    public String toString(){
+        return name;
+    }
+
     public boolean isSync() {
         return sync;
     }

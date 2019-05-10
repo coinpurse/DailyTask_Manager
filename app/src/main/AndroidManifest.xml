@@ -15,6 +15,9 @@
         <activity android:name=".ToDoActivity" />
         <activity android:name=".ShowTask" />
         <activity android:name=".AddTask" />
+        <activity android:name=".GroupFinder"/>
+        <activity android:name=".CreateGroup"/>
+        <activity android:name=".GroupList"/>
         <activity android:name=".MainActivity">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />

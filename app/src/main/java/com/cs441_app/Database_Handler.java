@@ -80,8 +80,8 @@ public class Database_Handler {
         DocumentReference groupref = db.collection("Groups").document();
 
         Group group = new Group(GroupName);
-        groupref.set(group);
         group.setGroupID(groupref.getId());
+        groupref.set(group);
         groupref.collection("Members").document(user.getUserID()).set(user);
         db.collection("Users").document(user.getUserID()).collection("Participates").document(group.getGroupID()).set(group);
 
@@ -93,17 +93,28 @@ public class Database_Handler {
      * @param user The account to be added to the group
      * @param group The group that allows the user to join
      */
-    public void joinGroup(User user, Group group){
-        db.collection("Groups").document(group.getGroupID()).collection("Members").document(user.getUserID()).set(user);
-        db.collection("Users").document(user.getUserID()).collection("Participates").document(group.getGroupID()).set(group);
-    }
+    public void joinGroup(final User user, final Group group){
+        db.collection("Users").document(user.getUserID()).collection("Participates").whereEqualTo("groupID", group.getGroupID()).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull com.google.android.gms.tasks.Task<QuerySnapshot> task) {
+                if (task.isSuccessful()) {
+                    if (task.getResult().getDocuments().size() == 0) {
+                        db.collection("Groups").document(group.getGroupID()).collection("Members").document(user.getUserID()).set(user);
+                        db.collection("Users").document(user.getUserID()).collection("Participates").document(group.getGroupID()).set(group);
+                    }
+                }
+            }
+        });
 
+
+    }
     /**
      * Deletes the user from a specified group
      * @param AccountID The user to be deleted from the group
      * @param GroupID The group to be removed from the users group list
      */
     public void leaveGroup(String AccountID, String GroupID){
+
         db.collection("Groups").document(GroupID).collection("Members").document(AccountID).delete();
         db.collection("Users").document(AccountID).collection("Participates").document(GroupID).delete();
     }
@@ -221,12 +232,12 @@ public class Database_Handler {
                     for (QueryDocumentSnapshot document : task.getResult()) {
                         Log.d(TAG, document.getId() + " => " + document.getData());
                         Map info = document.getData();
-                        Group g = new Group((String) info.get("groupID"), (String) info.get("name"));
+                        Group g = new Group((String) info.get("groupID"), (String) info.get("name"), (boolean) info.get("sync"));
                         list.add(g);
                     }
                     // full array list is here, put function call to update view here.
                     System.out.println("Size of list: " + list.size());
-                    // STATIC FUNCTION GOES HERE
+                    GroupList.getResults(list);
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
@@ -267,10 +278,8 @@ public class Database_Handler {
      * @param Name The name of the group to search for
      */
     public void readGroups_ByName(String Name){
-        char i = Name.charAt(Name.length() - 1);
-        String Skey = Name.substring(0,Name.length() - 1) + (i+1);
 
-        Query q = db.collection("Groups").whereGreaterThanOrEqualTo("name", Name).whereLessThan("name", Skey);
+        Query q = db.collection("Groups").whereEqualTo("name", Name);
 
         q.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
@@ -285,7 +294,7 @@ public class Database_Handler {
                     }
                     // full array list is here, put function call to update view here.
                     System.out.println("Size of list: " + list.size());
-                    // STATIC FUNCTION GOES HERE
+                    GroupFinder.getResults(list);
                 } else {
                     Log.d(TAG, "Error getting documents: ", task.getException());
                 }
