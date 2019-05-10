@@ -49,6 +49,8 @@
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/btnMenuMain">
 
+
+
             <TextView
                 android:id="@+id/tvDate"
                 android:layout_width="wrap_content"
@@ -68,10 +70,26 @@
             android:layout_marginStart="8dp"
             android:layout_marginTop="45sp"
             android:layout_marginEnd="8dp"
+            android:layout_marginBottom="40dp"
+            app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintHorizontal_bias="0.0"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toBottomOf="@+id/linearLayout" />
+
+        <ImageView
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:layout_gravity="bottom"
+            android:layout_marginStart="8dp"
+            android:layout_marginTop="8dp"
+            android:clickable="true"
+            android:text="O"
+            android:src="@drawable/drawcolor"
+            android:id="@+id/clickeCOlor"
+            android:onClick="OpenCategories"
+            app:layout_constraintStart_toStartOf="parent"
+            app:layout_constraintTop_toTopOf="@+id/linearLayout"/>
 
     </android.support.constraint.ConstraintLayout>
     <ListView

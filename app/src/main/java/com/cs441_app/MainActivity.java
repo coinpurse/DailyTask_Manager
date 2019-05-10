@@ -3,6 +3,7 @@ package com.cs441_app;
 
 
 import android.content.res.Configuration;
+import android.provider.ContactsContract;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBarDrawerToggle;
@@ -48,6 +49,7 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     private static boolean login;
 
     public static Group group;
+    ImageView imageView;
     public static boolean groupview;
 
     private static final String TAG = "MainActivity";
@@ -156,6 +158,8 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
             }
         });
 
+
+        imageView=findViewById(R.id.clickeCOlor);
 
         //------------------------------------------------------MAKE THIS INTO A FUNCTION
         mDisplayDate = (TextView) findViewById(R.id.tvDate);
@@ -316,6 +320,11 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
 
     public static void setLogin(boolean login) {
         MainActivity.login = login;
+    }
+
+    public void OpenCategories(View view) {
+        Intent intentCategories = new Intent(this,Categories.class);
+        startActivity(intentCategories);
     }
 }
 

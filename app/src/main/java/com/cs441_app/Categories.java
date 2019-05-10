@@ -103,7 +103,7 @@ public class Categories extends AppCompatActivity {
         openMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intentMenu = new Intent(Categories.this, Menu.class);
+                Intent intentMenu = new Intent(Categories.this, MainActivity.class);
                 startActivity(intentMenu);
             }
         });//end of onClick
