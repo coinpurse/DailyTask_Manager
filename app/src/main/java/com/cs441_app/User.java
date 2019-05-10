@@ -16,6 +16,11 @@ public class User {
         Name = name;
     }
 
+    @Override
+    public String toString(){
+        return Name;
+    }
+
     public String getUserID() {
         return UserID;
     }

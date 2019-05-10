@@ -3,8 +3,8 @@
 
     <!-- "Mark Favorite", should appear as action button if possible -->
     <item
-        android:id="@+id/action_add_task"
-        android:icon="@drawable/ic_add_task"
+        android:id="@+id/action_view_members"
+        android:icon="@drawable/member_icon"
         android:title="@string/my_calendar"
         app:showAsAction="always"/>
 

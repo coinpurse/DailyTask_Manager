@@ -84,20 +84,35 @@ public class MainActivity extends AppCompatActivity implements AdapterView.OnIte
     public boolean onCreateOptionsMenu(Menu menu) {
         // Inflate the menu; this adds items to the action bar if it is present.
         getMenuInflater().inflate(R.menu.add_task, menu);
+        if(groupview){
+            getMenuInflater().inflate(R.menu.view_members, menu);
+            getMenuInflater().inflate(R.menu.messenger, menu);
+        }
         return true;
     }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
+        Intent intent;
         switch (item.getItemId()) {
             case R.id.action_add_task:
-                Intent intentAddTask = new Intent(MainActivity.this,
+                intent = new Intent(MainActivity.this,
                         AddTask.class);
-                startActivity(intentAddTask);
+                startActivity(intent);
                 return true;
             case R.id.action_nav_drawer:
                 return true;
-            default:
+            case R.id.action_view_members:
+                intent = new Intent(MainActivity.this,
+                        MemberList.class);
+                startActivity(intent);
+                return true;
+            case R.id.action_messenger:
+                intent = new Intent(MainActivity.this,
+                        Messenger.class);
+                startActivity(intent);
+                return true;
+                default:
                 // If we got here, the user's action was not recognized.
                 // Invoke the superclass to handle it.
                 return super.onOptionsItemSelected(item);

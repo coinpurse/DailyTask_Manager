@@ -1,5 +1,7 @@
 package com.cs441_app;
 
+import java.text.SimpleDateFormat;
+
 public class Message {
     private String content;
     private String authorName;
@@ -11,6 +13,8 @@ public class Message {
     private long hour;
     private long min;
 
+    private String timestamp;
+
     public Message(String cont, String name, String id, long d, long m, long y, long h, long mi){
         content = cont;
         authorName = name;
@@ -20,6 +24,28 @@ public class Message {
         year = y;
         hour = h;
         min = mi;
+    }
+
+    public Message(String cont, String name, String id){
+        content = cont;
+        authorName = name;
+        authorID = id;
+        timestamp = new SimpleDateFormat("yyy.MM.dd.HH.mm.ss").format(new java.util.Date());
+    }
+
+    public Message(String cont, String name, String id, String Timestamp){
+        content = cont;
+        authorName = name;
+        authorID = id;
+        timestamp = Timestamp;
+    }
+
+    public String getTimestamp() {
+        return timestamp;
+    }
+
+    public void setTimestamp(String timestamp) {
+        this.timestamp = timestamp;
     }
 
     public String getContent() {
